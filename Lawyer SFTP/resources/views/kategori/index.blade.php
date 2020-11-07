@@ -1,0 +1,174 @@
+@extends('layouts.app')
+@section('title')
+{{request()->is('kategori-client*')?'Layanan Client':'Layanan Advokat'}}
+@endsection
+@section('css')
+@endsection
+
+@section('content')
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">Daftar {{request()->is('kategori-client*')?'Layanan Client':'Layanan Advokat'}}</h1>
+<p class="mb-4">
+</p>
+
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary" style="float:left;display:inline">Daftar {{request()->is('kategori-client*')?'Layanan Client':'Layanan Advokat'}}</h6>
+    <!-- <a href="#" class="btn btn-danger" style="float:right;display:inline"  data-toggle="modal" data-target="#modalKategori">
+        Tambah {{request()->is('kategori-client*')?'Layanan Client':'Layanan Lawyer'}}
+    </a> -->
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th width="10px">No</th>
+            <th>Nama</th>
+            <th>Gambar</th>
+            <th>Deskripsi</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach($kategori as $m)
+          <tr>
+            <td>{{$loop->iteration}}</td>
+            <td>{{$m->nama}}</td>
+            <td><img src="{{asset($m->image)}}" alt="Gambar" width="200px" class="img-thumbnail myImg"></td>
+            <td>{{$m->deskripsi}}</td>
+            <td>
+            @if($m->status == true)
+            Aktif
+            @else
+            Tidak Aktif
+            @endif
+            </td>
+            <td>
+                <a href="#" name="{{request()->is('kategori-client*')?'kategori-client/status/':'kategori-lawyer/status/'}}" style="color:white" class="activation badge bg-{{($m->status == true)?'success':'danger'}}" id="{{$m->id}}" value="{{$m->status}}">{{($m->status == true)?'Aktif':'Tidak Aktif'}}</a>
+                <a href="#" name="{{request()->is('kategori-client*')?'kategori-client':'kategori-lawyer'}}" style="color:white" class="badge bg-info editKategori" id="{{$m->id}}" data-toggle="modal" data-target="#modalKategoriEdit">Edit</a>
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div>
+<!-- /.container-fluid -->
+
+@endsection
+@section('footer')
+@endsection
+@section('modal')
+<!-- Modal Kategori-->
+
+<div class="modal fade" id="modalKategori" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Tambah Kategori</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form action="{{request()->is('kategori-client*')?url('kategori-client'):url('kategori-lawyer')}}" method="post" enctype="multipart/form-data" class='form'>
+        @csrf
+        <div class="form-group">
+            <label>Nama</label>
+            <input type="nama" class="form-control" name="nama" placeholder="Nama" required>
+        </div>
+        <div class="form-group">
+            <label>Gambar</label><br>
+            <small style="color:red">*max upload 2MB</small>
+            <input type="file" class="form-control" name="image" required>
+        </div>
+        <div class="form-group">
+            <label>Deskripsi</label>
+            <textarea name="deskripsi" class="form-control" cols="30" rows="10" required></textarea>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+    </form>
+    </div>
+</div>
+</div>
+</div>
+
+<div class="modal fade" id="modalKategoriEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Kategori</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form action="{{url('kategori')}}" method="post" enctype="multipart/form-data" class='form-kategori'>
+        @method('put')
+        @csrf
+        <div class="form-group">
+            <label>Nama</label>
+            <input type="nama" class="form-control" name="nama" id="nama" placeholder="Nama" required>
+        </div>
+        <div class="form-group" id="gambar">
+            <label>Gambar</label><br>
+            <img src="" width="200px" alt="" class="img-thumbnail image"><br>
+            <small style="color:red">*max upload 2MB</small><br>
+            <small style="color:red">*Kosongi Jika tidak ingin diubah</small>
+            <input type="file" class="form-control" name="image" id="image">
+        </div>
+        <div class="form-group">
+            <label>Deskripsi</label>
+            <textarea name="deskripsi" class="form-control" id="deskripsi" cols="30" rows="10"></textarea>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+    </form>
+    </div>
+</div>
+</div>
+
+@endsection
+@section('js')
+<script>
+  //$('.editKategori').on('click', function(){
+    $('table tbody').on('click', '.editKategori', function (e){
+    var id = $(this).attr('id');
+    var method = $(this).attr('name');
+    //console.log(data);
+    var url = "{{ url('')}}/"+method+'/'+id;
+    $.ajax({
+            type:"get",
+            url:"{{url('')}}/" + method + '/' + id + "/edit",
+            success:function(data){
+              $('.form-kategori').attr('action', url)
+              $('.form-kategori #nama').val(data.nama)
+              $(".form-kategori .image").attr('src', "{{asset('/')}}"+ data.image )
+              $('.form-kategori #deskripsi').val(data.deskripsi);
+            },
+            error : function(data){
+              console.log(data.responseText)
+              alert('Sorry, Something error :(')
+            }
+          })
+  })
+</script>
+
+@endsection
